@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script language="javascript" src="growth_estimator.js"></script>
+<table>
+	<tr>
+		<td>Rate:</td>
+		<td><input type="number" id="rate" step=".01" value=".07" /></td>
+	</tr>
+	<tr>
+		<td>Years:</td>
+		<td><input type="number" id="years" value="0" /></td>
+	</tr>
+	<tr>
+		<td>Investment:</td>
+		<td><input type="number" id="investment" value="0" /></td>
+	</tr>
+	<tr>
+		<td>Recurring:</td>
+		<td>
+			Yes <input type="radio" name="recurring" value="true" checked />
+			No <input type="radio" name="recurring" value="false" />
+		</td>
+	</tr>
+	<tr>
+		<td colspan=2><input type="button" id="calculateBtn" onclick="calculate()" value="Calculate" /></td>
+	</tr>
+</table>
+<hr />
+Value after <span id="yearAmount">X</span> years: $<span id="amount">Y</span>
+<table>
+	<tr>
+		<td>Sum: $<span id='sum'>0</span> after <span id='sumYears'>0</span> years</td>
+		<td><input type='button' onclick='add()'  value='Add' /></td>
+		<td><input type='button' onclick='clearValues()' value='Clear' /></td>
+	</tr>
+</table>
+<script language="javascript">
+
+const calculator = new GrowthEstimator();
+calculator.setLogging(true);
+
+function calculate() {
+
+	// grab the values
+
+	const rate = parseFloat(document.getElementById('rate').value);
+	const years = parseInt(document.getElementById('years').value);
+	const investment = parseFloat(document.getElementById('investment').value);
+	const recurring = document.querySelector('input[name="recurring"]:checked').value == 'true';
+	
+	// update the state of the calculator
+	
+	calculator.setRate(rate);
+	calculator.setYears(years);
+	calculator.setRecurring(recurring);
+	
+	// perform the calculation
+	
+	const result = calculator.calculate(investment);
+	
+	// update the view
+	
+	document.getElementById('yearAmount').innerHTML = years;
+	document.getElementById('amount').innerHTML = result.toFixed(2);
+	
+}
+
+function add() {
+	const current = parseFloat(document.getElementById('sum').innerText);
+	const currentYears = parseInt(document.getElementById('sumYears').innerHTML);
+
+	const value = parseFloat(document.getElementById('amount').innerText);
+	const yearsValue = parseInt(document.getElementById('years').value);
+	const updated = parseFloat(current) + parseFloat(value);
+	const updatedYears = yearsValue + currentYears;
+	
+	document.getElementById('sum').innerHTML = isNaN(updated) ? 0 : updated.toFixed(2);
+	document.getElementById('sumYears').innerHTML = updatedYears;
+}
+
+function clearValues() {
+	document.getElementById('sum').innerHTML = '0';
+	document.getElementById('sumYears').innerHTML = '0';
+}
+
+</script>
+</body>
+</html>
